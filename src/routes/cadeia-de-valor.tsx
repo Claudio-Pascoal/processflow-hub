@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { usePortal } from "@/portal/data";
 import { Carregando, EstadoProcessoBadge, PageHeader, PortalShell } from "@/portal/ui";
-import { MACROPROCESSOS } from "@/portal/model";
+import { MACROPROCESSOS, MACRO_INFO } from "@/portal/model";
 
 export const Route = createFileRoute("/cadeia-de-valor")({
   head: () => ({
@@ -37,16 +37,17 @@ function CadeiaDeValor() {
         <Carregando />
       ) : (
         MACROPROCESSOS.map((macro) => {
-          const lista = processos.filter((p) => p.macroprocesso === macro.nome);
+          const info = MACRO_INFO[macro];
+          const lista = processos.filter((p) => p.macroprocesso === macro);
           return (
-            <section key={macro.nome} className="pcp-vc-band" style={{ borderLeftColor: macro.cor }}>
+            <section key={macro} className="pcp-vc-band" style={{ borderLeftColor: info.cor }}>
               <div className="pcp-vc-band-head">
-                <h2 style={{ color: macro.cor }}>{macro.nome}</h2>
+                <h2 style={{ color: info.cor }}>{macro}</h2>
                 <span>
-                  {macro.tipo} · {lista.length} processo(s)
+                  {info.tipo} · {lista.length} processo(s)
                 </span>
               </div>
-              <p className="pcp-vc-band-desc">{macro.descricao}</p>
+              <p className="pcp-vc-band-desc">{info.descricao}</p>
               <div className="pcp-vc-cards">
                 {lista.map((p) => (
                   <Link

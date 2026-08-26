@@ -4,6 +4,29 @@
  */
 
 export const MACROPROCESSOS = ["Gestão", "Primários", "Suporte"] as const;
+export type Macroprocesso = (typeof MACROPROCESSOS)[number];
+
+export const MACRO_INFO: Record<
+  Macroprocesso,
+  { tipo: string; cor: string; descricao: string }
+> = {
+  "Gestão": {
+    tipo: "Processos de gestão",
+    cor: "#1f4e79",
+    descricao:
+      "Definem a direção, monitorizam o desempenho e asseguram a conformidade da organização.",
+  },
+  "Primários": {
+    tipo: "Processos core",
+    cor: "#2e7d5b",
+    descricao: "Criam valor diretamente para o cliente, do pedido à entrega do serviço.",
+  },
+  "Suporte": {
+    tipo: "Processos de suporte",
+    cor: "#8a5a2b",
+    descricao: "Fornecem recursos, sistemas e competências que sustentam os processos core.",
+  },
+};
 export const DOC_TIPOS = ["Contexto", "Fluxograma", "POP", "RACI"] as const;
 
 export type DocTipo = (typeof DOC_TIPOS)[number];
