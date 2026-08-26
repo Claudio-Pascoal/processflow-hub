@@ -293,3 +293,16 @@
       .pcp-chart-grid, .pcp-detail-grid, .pcp-form-grid, .pcp-doc-toggle-grid{grid-template-columns:1fr;}
     }
   
+    /* Cadeia de valor — faixas por macroprocesso */
+    .code-tag{font-family:var(--font-data); font-size:12px; color:var(--accent); background:var(--accent-soft); padding:3px 9px; border-radius:6px; display:inline-block; margin-bottom:8px; letter-spacing:.03em;}
+    .pcp-vc-band{background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--accent); border-radius:12px; padding:18px 22px; margin-bottom:16px;}
+    .pcp-vc-band-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px;}
+    .pcp-vc-band-head h2{font-size:16px; font-weight:700; margin:0;}
+    .pcp-vc-band-head span{font-size:12px; color:var(--text-faint);}
+    .pcp-vc-band-desc{font-size:12.5px; color:var(--text-muted); margin:6px 0 14px 0;}
+    .pcp-vc-cards{display:grid; grid-template-columns:repeat(4,1fr); gap:12px;}
+    .pcp-vc-card{display:block; text-decoration:none; color:inherit; border:1px solid var(--border); border-radius:10px; padding:12px; background:var(--surface-alt); transition:border-color .15s, transform .15s;}
+    .pcp-vc-card:hover{border-color:var(--accent); transform:translateY(-2px);}
+    .pcp-vc-card .code{font-family:var(--font-data); font-size:11px; color:var(--accent);}
+    .pcp-vc-card .name{font-size:13px; font-weight:600; margin:4px 0 8px 0; line-height:1.35;}
+    @media (max-width: 1100px){ .pcp-vc-cards{grid-template-columns:repeat(2,1fr);} }
