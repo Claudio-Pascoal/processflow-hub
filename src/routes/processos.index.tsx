@@ -4,13 +4,15 @@ import { matchesQuery, usePortal } from "@/portal/data";
 import { Carregando, EstadoProcessoBadge, PageHeader, PortalShell, ProgressBar } from "@/portal/ui";
 import { MACROPROCESSOS, formatarData } from "@/portal/model";
 
-type Busca = { q?: string; macro?: string; estado?: string };
+type Busca = { q: string; macro: string; estado: string };
+
+const str = (v: unknown) => (typeof v === "string" ? v : "");
 
 export const Route = createFileRoute("/processos/")({
   validateSearch: (search: Record<string, unknown>): Busca => ({
-    q: typeof search.q === "string" ? search.q : undefined,
-    macro: typeof search.macro === "string" ? search.macro : undefined,
-    estado: typeof search.estado === "string" ? search.estado : undefined,
+    q: str(search["q"]),
+    macro: str(search["macro"]),
+    estado: str(search["estado"]),
   }),
   head: () => ({
     meta: [
@@ -33,12 +35,12 @@ export const Route = createFileRoute("/processos/")({
 const ESTADOS = ["Em Elaboração", "Em Validação", "Em Aprovação", "Concluído"];
 
 function Processos() {
-  const { q = "", macro = "", estado = "" } = Route.useSearch();
-  const navigate = useNavigate({ from: "/processos" });
+  const { q, macro, estado } = Route.useSearch();
+  const navigate = useNavigate({ from: "/processos/" });
   const { data, isLoading } = usePortal();
 
-  const set = (patch: Busca) =>
-    navigate({ search: (prev) => ({ ...prev, ...patch }) as Busca, replace: true });
+  const set = (patch: Partial<Busca>) =>
+    navigate({ search: (prev: Busca) => ({ ...prev, ...patch }), replace: true });
 
   const lista = (data?.processos ?? []).filter(
     (p) =>
@@ -59,14 +61,14 @@ function Processos() {
           <Search size={15} />
           <input
             value={q}
-            onChange={(e) => set({ q: e.target.value || undefined })}
+            onChange={(e) => set({ q: e.target.value })}
             placeholder="Pesquisar por nome, código ou palavra-chave"
           />
         </div>
         <select
           className="pcp-select"
           value={macro}
-          onChange={(e) => set({ macro: e.target.value || undefined })}
+          onChange={(e) => set({ macro: e.target.value })}
         >
           <option value="">Todos os macroprocessos</option>
           {MACROPROCESSOS.map((m) => (
@@ -76,7 +78,7 @@ function Processos() {
         <select
           className="pcp-select"
           value={estado}
-          onChange={(e) => set({ estado: e.target.value || undefined })}
+          onChange={(e) => set({ estado: e.target.value })}
         >
           <option value="">Todos os estados</option>
           {ESTADOS.map((e) => (
@@ -84,10 +86,7 @@ function Processos() {
           ))}
         </select>
         {(q || macro || estado) && (
-          <button
-            className="pcp-clear-btn"
-            onClick={() => set({ q: undefined, macro: undefined, estado: undefined })}
-          >
+          <button className="pcp-clear-btn" onClick={() => set({ q: "", macro: "", estado: "" })}>
             <X size={14} /> Limpar
           </button>
         )}
