@@ -10,33 +10,141 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdministracaoRouteImport } from './routes/administracao'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CadeiaDeValorRouteImport } from './routes/cadeia-de-valor'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ProcessosIndexRouteImport } from './routes/processos.index'
+import { Route as ProcessosCodigoRouteImport } from './routes/processos.$codigo'
+import { Route as WorkflowIndexRouteImport } from './routes/workflow.index'
+import { Route as WorkflowCodigoRouteImport } from './routes/workflow.$codigo'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdministracaoRoute = AdministracaoRouteImport.update({
+  id: '/administracao',
+  path: '/administracao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadeiaDeValorRoute = CadeiaDeValorRouteImport.update({
+  id: '/cadeia-de-valor',
+  path: '/cadeia-de-valor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProcessosIndexRoute = ProcessosIndexRouteImport.update({
+  id: '/processos/',
+  path: '/processos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProcessosCodigoRoute = ProcessosCodigoRouteImport.update({
+  id: '/processos/$codigo',
+  path: '/processos/$codigo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorkflowIndexRoute = WorkflowIndexRouteImport.update({
+  id: '/workflow/',
+  path: '/workflow/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorkflowCodigoRoute = WorkflowCodigoRouteImport.update({
+  id: '/workflow/$codigo',
+  path: '/workflow/$codigo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/administracao': typeof AdministracaoRoute
+  '/auth': typeof AuthRoute
+  '/cadeia-de-valor': typeof CadeiaDeValorRoute
+  '/dashboard': typeof DashboardRoute
+  '/processos/$codigo': typeof ProcessosCodigoRoute
+  '/workflow/$codigo': typeof WorkflowCodigoRoute
+  '/processos/': typeof ProcessosIndexRoute
+  '/workflow/': typeof WorkflowIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/administracao': typeof AdministracaoRoute
+  '/auth': typeof AuthRoute
+  '/cadeia-de-valor': typeof CadeiaDeValorRoute
+  '/dashboard': typeof DashboardRoute
+  '/processos/$codigo': typeof ProcessosCodigoRoute
+  '/workflow/$codigo': typeof WorkflowCodigoRoute
+  '/processos': typeof ProcessosIndexRoute
+  '/workflow': typeof WorkflowIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/administracao': typeof AdministracaoRoute
+  '/auth': typeof AuthRoute
+  '/cadeia-de-valor': typeof CadeiaDeValorRoute
+  '/dashboard': typeof DashboardRoute
+  '/processos/$codigo': typeof ProcessosCodigoRoute
+  '/workflow/$codigo': typeof WorkflowCodigoRoute
+  '/processos/': typeof ProcessosIndexRoute
+  '/workflow/': typeof WorkflowIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/administracao'
+    | '/auth'
+    | '/cadeia-de-valor'
+    | '/dashboard'
+    | '/processos/$codigo'
+    | '/workflow/$codigo'
+    | '/processos/'
+    | '/workflow/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/administracao'
+    | '/auth'
+    | '/cadeia-de-valor'
+    | '/dashboard'
+    | '/processos/$codigo'
+    | '/workflow/$codigo'
+    | '/processos'
+    | '/workflow'
+  id:
+    | '__root__'
+    | '/'
+    | '/administracao'
+    | '/auth'
+    | '/cadeia-de-valor'
+    | '/dashboard'
+    | '/processos/$codigo'
+    | '/workflow/$codigo'
+    | '/processos/'
+    | '/workflow/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdministracaoRoute: typeof AdministracaoRoute
+  AuthRoute: typeof AuthRoute
+  CadeiaDeValorRoute: typeof CadeiaDeValorRoute
+  DashboardRoute: typeof DashboardRoute
+  ProcessosCodigoRoute: typeof ProcessosCodigoRoute
+  WorkflowCodigoRoute: typeof WorkflowCodigoRoute
+  ProcessosIndexRoute: typeof ProcessosIndexRoute
+  WorkflowIndexRoute: typeof WorkflowIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +156,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/administracao': {
+      id: '/administracao'
+      path: '/administracao'
+      fullPath: '/administracao'
+      preLoaderRoute: typeof AdministracaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadeia-de-valor': {
+      id: '/cadeia-de-valor'
+      path: '/cadeia-de-valor'
+      fullPath: '/cadeia-de-valor'
+      preLoaderRoute: typeof CadeiaDeValorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/processos/': {
+      id: '/processos/'
+      path: '/processos'
+      fullPath: '/processos/'
+      preLoaderRoute: typeof ProcessosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/processos/$codigo': {
+      id: '/processos/$codigo'
+      path: '/processos/$codigo'
+      fullPath: '/processos/$codigo'
+      preLoaderRoute: typeof ProcessosCodigoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/workflow/': {
+      id: '/workflow/'
+      path: '/workflow'
+      fullPath: '/workflow/'
+      preLoaderRoute: typeof WorkflowIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/workflow/$codigo': {
+      id: '/workflow/$codigo'
+      path: '/workflow/$codigo'
+      fullPath: '/workflow/$codigo'
+      preLoaderRoute: typeof WorkflowCodigoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdministracaoRoute: AdministracaoRoute,
+  AuthRoute: AuthRoute,
+  CadeiaDeValorRoute: CadeiaDeValorRoute,
+  DashboardRoute: DashboardRoute,
+  ProcessosCodigoRoute: ProcessosCodigoRoute,
+  WorkflowCodigoRoute: WorkflowCodigoRoute,
+  ProcessosIndexRoute: ProcessosIndexRoute,
+  WorkflowIndexRoute: WorkflowIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
