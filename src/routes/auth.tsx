@@ -81,8 +81,11 @@ function Auth() {
             {modo === "entrar" ? "Entrar no portal" : "Criar conta"}
           </h1>
           <p className="pcp-sub" style={{ marginBottom: 18 }}>
-            A consulta é livre. A autenticação é necessária para executar ações de workflow.
+            A consulta é livre. A autenticação é necessária para executar ações de workflow. Contas
+            novas começam como <b>Leitor</b> — um Administrador atribui depois o papel de Analista,
+            Gestor ou Dono em Administração.
           </p>
+
 
           <button
             type="button"
