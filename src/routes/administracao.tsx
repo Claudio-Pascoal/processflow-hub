@@ -40,7 +40,11 @@ export const Route = createFileRoute("/administracao")({
 
 function Administracao() {
   const { data, isLoading } = usePortal();
-  const session = useSession();
+  const { session, papeis } = useUtilizadorAtual();
+  const podeCriar = podeCriarProcesso(papeis);
+  const gerePapeis = podeGerirPapeis(papeis);
+  const papeisTodos = usePapeisTodos(gerePapeis);
+
   const queryClient = useQueryClient();
 
   const [form, setForm] = useState({
