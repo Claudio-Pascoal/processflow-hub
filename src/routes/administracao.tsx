@@ -96,7 +96,31 @@ function Administracao() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const atribuirPapel = useMutation({
+    mutationFn: async ({ authUserId, papel }: { authUserId: string; papel: Papel | "" }) => {
+      const { error: erroDel } = await supabase
+        .from("user_roles")
+        .delete()
+        .eq("user_id", authUserId);
+      if (erroDel) throw erroDel;
+      if (papel) {
+        const { error } = await supabase
+          .from("user_roles")
+          .insert({ user_id: authUserId, role: papel });
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      toast.success("Papel atualizado");
+      queryClient.invalidateQueries({ queryKey: ["papeis-todos"] });
+      queryClient.invalidateQueries({ queryKey: ["papeis"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const utilizadores = data?.utilizadores ?? [];
+  const papelDe = (authUserId: string | null): Papel | "" =>
+    (papeisTodos.data?.find((r) => r.user_id === authUserId)?.role ?? "") as Papel | "";
 
   return (
     <PortalShell>
@@ -107,9 +131,16 @@ function Administracao() {
 
       {!session && (
         <div className="pcp-lockmsg">
-          <Lock size={14} /> Só utilizadores autenticados podem criar ou alterar registos.
+          <Lock size={14} /> Entre com a sua conta para criar ou alterar registos.
         </div>
       )}
+      {session && !podeCriar && (
+        <div className="pcp-lockmsg">
+          <Lock size={14} /> A criação de processos está reservada a Analistas de Processos e
+          Administradores. Peça a um Administrador para lhe atribuir o papel.
+        </div>
+      )}
+
 
       <div className="pcp-card" style={{ padding: "20px 22px" }}>
         <h2 style={{ fontSize: 14, margin: "0 0 14px 0", color: "var(--primary-dark)" }}>
