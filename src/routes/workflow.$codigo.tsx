@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesUpdate } from "@/integrations/supabase/types";
 import { usePortal, type Processo, type VersaoRow } from "@/portal/data";
 import {
   Carregando,
@@ -115,7 +116,7 @@ function WorkflowProcesso() {
         return;
       }
 
-      const patch: Record<string, unknown> = {};
+      const patch: TablesUpdate<"documento_versoes"> = {};
       let de = versao.estado;
       let para = versao.estado;
 
