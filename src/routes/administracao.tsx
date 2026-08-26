@@ -307,29 +307,69 @@ function Administracao() {
 
       <div className="pcp-section-title">
         <h2>
-          <Users size={15} style={{ verticalAlign: "-2px" }} /> Utilizadores
+          <Users size={15} style={{ verticalAlign: "-2px" }} /> Utilizadores e papéis
         </h2>
       </div>
+      {gerePapeis ? (
+        <p className="pcp-sub" style={{ marginTop: -8 }}>
+          {PAPEIS.map((p) => `${PAPEL_LABEL[p]}: ${PAPEL_DESCRICAO[p]}`).join("  ·  ")}
+        </p>
+      ) : null}
       <div className="pcp-card" style={{ overflow: "hidden" }}>
         <table className="pcp-table">
           <thead>
             <tr>
               <th>Nome</th>
-              <th>Perfil</th>
+              <th>Perfil no processo</th>
               <th>Email</th>
+              <th>Papel de acesso</th>
             </tr>
           </thead>
           <tbody>
-            {utilizadores.map((u) => (
-              <tr key={u.id}>
-                <td>{u.nome}</td>
-                <td>{u.role}</td>
-                <td>{u.email ?? "—"}</td>
-              </tr>
-            ))}
+            {utilizadores.map((u) => {
+              const papelAtual = papelDe(u.auth_user_id);
+              return (
+                <tr key={u.id}>
+                  <td>{u.nome}</td>
+                  <td>{u.role}</td>
+                  <td>{u.email ?? "—"}</td>
+                  <td>
+                    {!gerePapeis ? (
+                      papelAtual ? (
+                        PAPEL_LABEL[papelAtual]
+                      ) : (
+                        "—"
+                      )
+                    ) : !u.auth_user_id ? (
+                      <span style={{ color: "var(--text-faint)" }}>Sem conta de login</span>
+                    ) : (
+                      <select
+                        className="pcp-input"
+                        value={papelAtual}
+                        disabled={atribuirPapel.isPending}
+                        onChange={(e) =>
+                          atribuirPapel.mutate({
+                            authUserId: u.auth_user_id!,
+                            papel: e.target.value as Papel | "",
+                          })
+                        }
+                      >
+                        <option value="">Sem papel</option>
+                        {PAPEIS.map((p) => (
+                          <option key={p} value={p}>
+                            {PAPEL_LABEL[p]}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
+
     </PortalShell>
   );
 }
