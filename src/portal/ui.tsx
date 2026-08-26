@@ -178,7 +178,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
         ))}
 
         <div className="pcp-sidebar-footer">
-          {session ? "Sessão ativa" : "Modo consulta"}
+          {session ? `Sessão ativa · ${PAPEL_LABEL[papel]}` : "Modo consulta"}
           <br />v1.0
         </div>
       </aside>
@@ -204,14 +204,22 @@ export function PortalShell({ children }: { children: ReactNode }) {
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
             {session ? (
               <>
-                <span style={{ fontSize: 12.5, color: "var(--text-muted)" }}>
-                  {session.user.email}
-                </span>
-                <button
-                  className="pcp-icon-btn"
-                  onClick={() => supabase.auth.signOut()}
-                  type="button"
+                <span
+                  style={{
+                    fontSize: 12.5,
+                    color: "var(--text-muted)",
+                    display: "flex",
+                    flexDirection: "column",
+                    lineHeight: 1.25,
+                    textAlign: "right",
+                  }}
                 >
+                  {session.user.email}
+                  <b style={{ color: "var(--primary-dark)", fontSize: 11.5 }}>
+                    {PAPEL_LABEL[papel]}
+                  </b>
+                </span>
+                <button className="pcp-icon-btn" onClick={sair} type="button">
                   <LogOut size={14} /> Sair
                 </button>
               </>
@@ -223,6 +231,8 @@ export function PortalShell({ children }: { children: ReactNode }) {
             <div className="pcp-avatar">
               {session?.user.email?.slice(0, 2).toUpperCase() ?? "PC"}
             </div>
+          </div>
+
           </div>
         </header>
 
