@@ -4,16 +4,17 @@ import { matchesQuery, usePortal } from "@/portal/data";
 import { Carregando, EstadoProcessoBadge, PageHeader, PortalShell, ProgressBar } from "@/portal/ui";
 import { MACROPROCESSOS, formatarData } from "@/portal/model";
 
-type Busca = { q: string; macro: string; estado: string };
-
-const str = (v: unknown) => (typeof v === "string" ? v : "");
+type Busca = { q?: string; macro?: string; estado?: string };
 
 export const Route = createFileRoute("/processos/")({
-  validateSearch: (search: Record<string, unknown>): Busca => ({
-    q: str(search["q"]),
-    macro: str(search["macro"]),
-    estado: str(search["estado"]),
-  }),
+  validateSearch: (search: Record<string, unknown>): Busca => {
+    const out: Busca = {};
+    for (const k of ["q", "macro", "estado"] as const) {
+      const v = search[k];
+      if (typeof v === "string" && v) out[k] = v;
+    }
+    return out;
+  },
   head: () => ({
     meta: [
       { title: "Processos — Portal Corporativo de Processos" },
@@ -35,7 +36,7 @@ export const Route = createFileRoute("/processos/")({
 const ESTADOS = ["Em Elaboração", "Em Validação", "Em Aprovação", "Concluído"];
 
 function Processos() {
-  const { q, macro, estado } = Route.useSearch();
+  const { q = "", macro = "", estado = "" } = Route.useSearch();
   const navigate = useNavigate({ from: "/processos/" });
   const { data, isLoading } = usePortal();
 
