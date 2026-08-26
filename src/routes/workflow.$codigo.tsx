@@ -14,14 +14,18 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { TablesUpdate } from "@/integrations/supabase/types";
-import { usePortal, type Processo, type VersaoRow } from "@/portal/data";
+import {
+  usePortal,
+  useUtilizadorAtual,
+  type Processo,
+  type VersaoRow,
+} from "@/portal/data";
 import {
   Carregando,
   DocEstadoBadge,
   EstadoProcessoBadge,
   PortalShell,
   ProgressBar,
-  useSession,
 } from "@/portal/ui";
 import {
   DOC_TIPOS,
@@ -29,8 +33,14 @@ import {
   WF_ETAPAS,
   etapaDoEstado,
   formatarData,
+  podeAprovar,
+  podeElaborar,
+  podeValidarDono,
+  podeValidarGestor,
   type DocTipo,
+  type Papel,
 } from "@/portal/model";
+
 
 export const Route = createFileRoute("/workflow/$codigo")({
   head: ({ params }) => ({
