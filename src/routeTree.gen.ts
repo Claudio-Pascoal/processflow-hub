@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CadeiaDeValorRouteImport } from './routes/cadeia-de-valor'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ProcessosIndexRouteImport } from './routes/processos.index'
@@ -20,6 +21,11 @@ import { Route as WorkflowCodigoRouteImport } from './routes/workflow.$codigo'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CadeiaDeValorRoute = CadeiaDeValorRouteImport.update({
@@ -55,6 +61,7 @@ const WorkflowCodigoRoute = WorkflowCodigoRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/cadeia-de-valor': typeof CadeiaDeValorRoute
   '/dashboard': typeof DashboardRoute
   '/processos/$codigo': typeof ProcessosCodigoRoute
@@ -64,6 +71,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/cadeia-de-valor': typeof CadeiaDeValorRoute
   '/dashboard': typeof DashboardRoute
   '/processos/$codigo': typeof ProcessosCodigoRoute
@@ -74,6 +82,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/cadeia-de-valor': typeof CadeiaDeValorRoute
   '/dashboard': typeof DashboardRoute
   '/processos/$codigo': typeof ProcessosCodigoRoute
@@ -85,6 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/cadeia-de-valor'
     | '/dashboard'
     | '/processos/$codigo'
@@ -94,6 +104,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/cadeia-de-valor'
     | '/dashboard'
     | '/processos/$codigo'
@@ -103,6 +114,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/auth'
     | '/cadeia-de-valor'
     | '/dashboard'
     | '/processos/$codigo'
@@ -113,6 +125,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   CadeiaDeValorRoute: typeof CadeiaDeValorRoute
   DashboardRoute: typeof DashboardRoute
   ProcessosCodigoRoute: typeof ProcessosCodigoRoute
@@ -128,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cadeia-de-valor': {
@@ -177,6 +197,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   CadeiaDeValorRoute: CadeiaDeValorRoute,
   DashboardRoute: DashboardRoute,
   ProcessosCodigoRoute: ProcessosCodigoRoute,
