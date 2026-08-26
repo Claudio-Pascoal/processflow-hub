@@ -37,7 +37,7 @@ function Administracao() {
     nome: "",
     descricao: "",
     macroprocesso: "Primários" as Macroprocesso,
-    categoria: "",
+    categoria_id: "",
     area: "",
     dono_id: "",
     gestor_id: "",
@@ -53,7 +53,7 @@ function Administracao() {
           nome: form.nome.trim(),
           descricao: form.descricao.trim() || null,
           macroprocesso: form.macroprocesso,
-          categoria: form.categoria.trim() || form.macroprocesso,
+          categoria_id: form.categoria_id || null,
           area: form.area.trim() || null,
           dono_id: form.dono_id || null,
           gestor_id: form.gestor_id || null,
@@ -144,11 +144,18 @@ function Administracao() {
           </label>
           <label>
             <span>Categoria</span>
-            <input
+            <select
               className="pcp-input"
-              value={form.categoria}
-              onChange={(e) => setForm({ ...form, categoria: e.target.value })}
-            />
+              value={form.categoria_id}
+              onChange={(e) => setForm({ ...form, categoria_id: e.target.value })}
+            >
+              <option value="">—</option>
+              {(data?.categorias ?? []).map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome}
+                </option>
+              ))}
+            </select>
           </label>
           <label>
             <span>Área</span>
@@ -261,7 +268,7 @@ function Administracao() {
           <thead>
             <tr>
               <th>Nome</th>
-              <th>Cargo</th>
+              <th>Perfil</th>
               <th>Email</th>
             </tr>
           </thead>
@@ -269,7 +276,7 @@ function Administracao() {
             {utilizadores.map((u) => (
               <tr key={u.id}>
                 <td>{u.nome}</td>
-                <td>{u.cargo ?? "—"}</td>
+                <td>{u.role}</td>
                 <td>{u.email ?? "—"}</td>
               </tr>
             ))}
