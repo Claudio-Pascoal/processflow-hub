@@ -262,11 +262,12 @@ function Administracao() {
             <button
               type="submit"
               className="pcp-btn-primary"
-              disabled={!session || criar.isPending}
+              disabled={!podeCriar || criar.isPending}
             >
               <Save size={15} /> Criar processo
             </button>
           </div>
+
         </form>
       </div>
 
