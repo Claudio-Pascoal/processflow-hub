@@ -4,9 +4,20 @@ import { useState } from "react";
 import { Lock, Plus, Save, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { usePortal } from "@/portal/data";
-import { Carregando, EstadoProcessoBadge, PageHeader, PortalShell, useSession } from "@/portal/ui";
-import { DOC_TIPOS, MACROPROCESSOS, type Macroprocesso } from "@/portal/model";
+import { usePapeisTodos, usePortal, useUtilizadorAtual } from "@/portal/data";
+import { Carregando, EstadoProcessoBadge, PageHeader, PortalShell } from "@/portal/ui";
+import {
+  DOC_TIPOS,
+  MACROPROCESSOS,
+  PAPEIS,
+  PAPEL_DESCRICAO,
+  PAPEL_LABEL,
+  podeCriarProcesso,
+  podeGerirPapeis,
+  type Macroprocesso,
+  type Papel,
+} from "@/portal/model";
+
 
 export const Route = createFileRoute("/administracao")({
   head: () => ({
@@ -29,7 +40,11 @@ export const Route = createFileRoute("/administracao")({
 
 function Administracao() {
   const { data, isLoading } = usePortal();
-  const session = useSession();
+  const { session, papeis } = useUtilizadorAtual();
+  const podeCriar = podeCriarProcesso(papeis);
+  const gerePapeis = podeGerirPapeis(papeis);
+  const papeisTodos = usePapeisTodos(gerePapeis);
+
   const queryClient = useQueryClient();
 
   const [form, setForm] = useState({
@@ -81,7 +96,31 @@ function Administracao() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const atribuirPapel = useMutation({
+    mutationFn: async ({ authUserId, papel }: { authUserId: string; papel: Papel | "" }) => {
+      const { error: erroDel } = await supabase
+        .from("user_roles")
+        .delete()
+        .eq("user_id", authUserId);
+      if (erroDel) throw erroDel;
+      if (papel) {
+        const { error } = await supabase
+          .from("user_roles")
+          .insert({ user_id: authUserId, role: papel });
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      toast.success("Papel atualizado");
+      queryClient.invalidateQueries({ queryKey: ["papeis-todos"] });
+      queryClient.invalidateQueries({ queryKey: ["papeis"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const utilizadores = data?.utilizadores ?? [];
+  const papelDe = (authUserId: string | null): Papel | "" =>
+    (papeisTodos.data?.find((r) => r.user_id === authUserId)?.role ?? "") as Papel | "";
 
   return (
     <PortalShell>
@@ -92,9 +131,16 @@ function Administracao() {
 
       {!session && (
         <div className="pcp-lockmsg">
-          <Lock size={14} /> Só utilizadores autenticados podem criar ou alterar registos.
+          <Lock size={14} /> Entre com a sua conta para criar ou alterar registos.
         </div>
       )}
+      {session && !podeCriar && (
+        <div className="pcp-lockmsg">
+          <Lock size={14} /> A criação de processos está reservada a Analistas de Processos e
+          Administradores. Peça a um Administrador para lhe atribuir o papel.
+        </div>
+      )}
+
 
       <div className="pcp-card" style={{ padding: "20px 22px" }}>
         <h2 style={{ fontSize: 14, margin: "0 0 14px 0", color: "var(--primary-dark)" }}>
@@ -216,11 +262,12 @@ function Administracao() {
             <button
               type="submit"
               className="pcp-btn-primary"
-              disabled={!session || criar.isPending}
+              disabled={!podeCriar || criar.isPending}
             >
               <Save size={15} /> Criar processo
             </button>
           </div>
+
         </form>
       </div>
 
@@ -260,29 +307,69 @@ function Administracao() {
 
       <div className="pcp-section-title">
         <h2>
-          <Users size={15} style={{ verticalAlign: "-2px" }} /> Utilizadores
+          <Users size={15} style={{ verticalAlign: "-2px" }} /> Utilizadores e papéis
         </h2>
       </div>
+      {gerePapeis ? (
+        <p className="pcp-sub" style={{ marginTop: -8 }}>
+          {PAPEIS.map((p) => `${PAPEL_LABEL[p]}: ${PAPEL_DESCRICAO[p]}`).join("  ·  ")}
+        </p>
+      ) : null}
       <div className="pcp-card" style={{ overflow: "hidden" }}>
         <table className="pcp-table">
           <thead>
             <tr>
               <th>Nome</th>
-              <th>Perfil</th>
+              <th>Perfil no processo</th>
               <th>Email</th>
+              <th>Papel de acesso</th>
             </tr>
           </thead>
           <tbody>
-            {utilizadores.map((u) => (
-              <tr key={u.id}>
-                <td>{u.nome}</td>
-                <td>{u.role}</td>
-                <td>{u.email ?? "—"}</td>
-              </tr>
-            ))}
+            {utilizadores.map((u) => {
+              const papelAtual = papelDe(u.auth_user_id);
+              return (
+                <tr key={u.id}>
+                  <td>{u.nome}</td>
+                  <td>{u.role}</td>
+                  <td>{u.email ?? "—"}</td>
+                  <td>
+                    {!gerePapeis ? (
+                      papelAtual ? (
+                        PAPEL_LABEL[papelAtual]
+                      ) : (
+                        "—"
+                      )
+                    ) : !u.auth_user_id ? (
+                      <span style={{ color: "var(--text-faint)" }}>Sem conta de login</span>
+                    ) : (
+                      <select
+                        className="pcp-input"
+                        value={papelAtual}
+                        disabled={atribuirPapel.isPending}
+                        onChange={(e) =>
+                          atribuirPapel.mutate({
+                            authUserId: u.auth_user_id!,
+                            papel: e.target.value as Papel | "",
+                          })
+                        }
+                      >
+                        <option value="">Sem papel</option>
+                        {PAPEIS.map((p) => (
+                          <option key={p} value={p}>
+                            {PAPEL_LABEL[p]}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
+
     </PortalShell>
   );
 }

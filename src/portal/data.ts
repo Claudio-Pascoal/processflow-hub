@@ -1,16 +1,27 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import {
   DOC_TIPOS,
   estadoProcesso,
+  papelPrincipal,
   progresso,
   type DocEstado,
   type DocTipo,
   type EstadoProcesso,
+  type Papel,
 } from "./model";
 
-export type Utilizador = { id: string; nome: string; email: string; role: string };
+export type Utilizador = {
+  id: string;
+  nome: string;
+  email: string;
+  role: string;
+  auth_user_id: string | null;
+};
 export type Categoria = { id: string; nome: string };
+
 
 export type VersaoRow = {
   id: string;
@@ -157,4 +168,61 @@ export function matchesQuery(p: Processo, q: string): boolean {
   return [p.codigo, p.nome, p.categoria, p.area, p.palavras_chave, p.descricao]
     .filter(Boolean)
     .some((f) => String(f).toLowerCase().includes(t));
+}
+
+/* ===================== SESSÃO, PAPÉIS E PERMISSÕES ===================== */
+
+export function useUtilizadorAtual() {
+  const [session, setSession] = useState<Session | null>(null);
+  const [pronto, setPronto] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setPronto(true);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  const userId = session?.user.id ?? null;
+
+  const papeisQuery = useQuery({
+    queryKey: ["papeis", userId],
+    enabled: !!userId,
+    staleTime: 30_000,
+    queryFn: async (): Promise<Papel[]> => {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId!);
+      if (error) throw new Error(error.message);
+      return (data ?? []).map((r) => r.role as Papel);
+    },
+  });
+
+  const papeis = papeisQuery.data ?? [];
+  return {
+    session,
+    userId,
+    papeis,
+    papel: papelPrincipal(papeis),
+    isAdmin: papeis.includes("admin"),
+    carregando: !pronto || (!!userId && papeisQuery.isLoading),
+  };
+}
+
+export type PapelDeUtilizador = { user_id: string; role: Papel };
+
+/** Todos os papéis atribuídos — legível apenas por Administradores (RLS). */
+export function usePapeisTodos(ativo: boolean) {
+  return useQuery({
+    queryKey: ["papeis-todos"],
+    enabled: ativo,
+    queryFn: async (): Promise<PapelDeUtilizador[]> => {
+      const { data, error } = await supabase.from("user_roles").select("user_id, role");
+      if (error) throw new Error(error.message);
+      return (data ?? []) as PapelDeUtilizador[];
+    },
+  });
 }

@@ -14,14 +14,18 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { TablesUpdate } from "@/integrations/supabase/types";
-import { usePortal, type Processo, type VersaoRow } from "@/portal/data";
+import {
+  usePortal,
+  useUtilizadorAtual,
+  type Processo,
+  type VersaoRow,
+} from "@/portal/data";
 import {
   Carregando,
   DocEstadoBadge,
   EstadoProcessoBadge,
   PortalShell,
   ProgressBar,
-  useSession,
 } from "@/portal/ui";
 import {
   DOC_TIPOS,
@@ -29,8 +33,14 @@ import {
   WF_ETAPAS,
   etapaDoEstado,
   formatarData,
+  podeAprovar,
+  podeElaborar,
+  podeValidarDono,
+  podeValidarGestor,
   type DocTipo,
+  type Papel,
 } from "@/portal/model";
+
 
 export const Route = createFileRoute("/workflow/$codigo")({
   head: ({ params }) => ({
@@ -77,6 +87,23 @@ function acoesDisponiveis(v: VersaoRow): Acao[] {
   }
 }
 
+/** Quem pode executar cada ação, e a mensagem quando não pode. */
+function permissaoDaAcao(acao: Acao, papeis: Papel[]): { pode: boolean; reservado: string } {
+  switch (acao.tipo) {
+    case "validar_gestor":
+      return { pode: podeValidarGestor(papeis), reservado: "reservado ao Gestor de Processo" };
+    case "validar_dono":
+      return { pode: podeValidarDono(papeis), reservado: "reservado ao Dono de Processo" };
+    case "aprovar":
+      return { pode: podeAprovar(papeis), reservado: "reservado ao Dono de Processo" };
+    default:
+      return {
+        pode: podeElaborar(papeis),
+        reservado: "reservado ao Analista de Processos",
+      };
+  }
+}
+
 function proximaVersao(versoes: VersaoRow[], tipo: DocTipo): string {
   const maiores = versoes
     .filter((v) => v.tipo_documento === tipo)
@@ -87,7 +114,8 @@ function proximaVersao(versoes: VersaoRow[], tipo: DocTipo): string {
 function WorkflowProcesso() {
   const { codigo } = Route.useParams();
   const { data, isLoading } = usePortal();
-  const session = useSession();
+  const { session, papeis } = useUtilizadorAtual();
+
   const queryClient = useQueryClient();
   const [tipoAberto, setTipoAberto] = useState<DocTipo | null>(null);
 
@@ -159,8 +187,11 @@ function WorkflowProcesso() {
         documento_versao_id: versao.id,
         de_estado: de,
         para_estado: para,
+        utilizador_id:
+          data?.utilizadores.find((u) => u.auth_user_id === session?.user.id)?.id ?? null,
         comentario: acao.label,
       });
+
     },
     onSuccess: () => {
       toast.success("Workflow atualizado");
@@ -290,18 +321,42 @@ function WorkflowProcesso() {
                   )}
                   {versao &&
                     session &&
-                    acoesDisponiveis(versao).map((a) => (
-                      <button
-                        key={a.tipo}
-                        className="pcp-icon-btn"
-                        style={{ marginTop: 8, width: "100%", justifyContent: "center" }}
-                        disabled={mutation.isPending}
-                        onClick={() => mutation.mutate({ acao: a, versao, processo: p })}
-                      >
-                        {a.tipo === "nova_versao" ? <Plus size={13} /> : <CheckCircle2 size={13} />}
-                        {a.label}
-                      </button>
-                    ))}
+                    acoesDisponiveis(versao).map((a) => {
+                      const { pode, reservado } = permissaoDaAcao(a, papeis);
+                      if (!pode)
+                        return (
+                          <div
+                            key={a.tipo}
+                            style={{
+                              marginTop: 8,
+                              fontSize: 11,
+                              color: "var(--text-faint)",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 4,
+                            }}
+                          >
+                            <Lock size={11} /> {a.label} — {reservado}
+                          </div>
+                        );
+                      return (
+                        <button
+                          key={a.tipo}
+                          className="pcp-icon-btn"
+                          style={{ marginTop: 8, width: "100%", justifyContent: "center" }}
+                          disabled={mutation.isPending}
+                          onClick={() => mutation.mutate({ acao: a, versao, processo: p })}
+                        >
+                          {a.tipo === "nova_versao" ? (
+                            <Plus size={13} />
+                          ) : (
+                            <CheckCircle2 size={13} />
+                          )}
+                          {a.label}
+                        </button>
+                      );
+                    })}
+
                   <button
                     className="pcp-icon-btn"
                     style={{ marginTop: 6, width: "100%", justifyContent: "center" }}
