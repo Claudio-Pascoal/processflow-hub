@@ -87,6 +87,23 @@ function acoesDisponiveis(v: VersaoRow): Acao[] {
   }
 }
 
+/** Quem pode executar cada ação, e a mensagem quando não pode. */
+function permissaoDaAcao(acao: Acao, papeis: Papel[]): { pode: boolean; reservado: string } {
+  switch (acao.tipo) {
+    case "validar_gestor":
+      return { pode: podeValidarGestor(papeis), reservado: "reservado ao Gestor de Processo" };
+    case "validar_dono":
+      return { pode: podeValidarDono(papeis), reservado: "reservado ao Dono de Processo" };
+    case "aprovar":
+      return { pode: podeAprovar(papeis), reservado: "reservado ao Dono de Processo" };
+    default:
+      return {
+        pode: podeElaborar(papeis),
+        reservado: "reservado ao Analista de Processos",
+      };
+  }
+}
+
 function proximaVersao(versoes: VersaoRow[], tipo: DocTipo): string {
   const maiores = versoes
     .filter((v) => v.tipo_documento === tipo)
@@ -97,7 +114,8 @@ function proximaVersao(versoes: VersaoRow[], tipo: DocTipo): string {
 function WorkflowProcesso() {
   const { codigo } = Route.useParams();
   const { data, isLoading } = usePortal();
-  const session = useSession();
+  const { session, papeis } = useUtilizadorAtual();
+
   const queryClient = useQueryClient();
   const [tipoAberto, setTipoAberto] = useState<DocTipo | null>(null);
 
