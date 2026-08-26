@@ -125,10 +125,20 @@ const NAV = [
 
 export function PortalShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const session = useSession();
+  const { session, papel } = useUtilizadorAtual();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [q, setQ] = useState("");
 
+  const sair = async () => {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  };
+
   const isActive = (to: string) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
+
 
   return (
     <div className="pcp-root">
