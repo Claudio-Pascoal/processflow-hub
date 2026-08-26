@@ -24,7 +24,7 @@ export const Route = createFileRoute("/administracao")({
       },
     ],
   }),
-  component: Administracao;
+  component: Administracao,
 });
 
 function Administracao() {
