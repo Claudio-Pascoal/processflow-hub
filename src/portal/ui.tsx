@@ -233,7 +233,6 @@ export function PortalShell({ children }: { children: ReactNode }) {
             </div>
           </div>
 
-          </div>
         </header>
 
         <main className="pcp-page">{children}</main>
