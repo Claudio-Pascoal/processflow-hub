@@ -41,7 +41,7 @@
     }
     .pcp-root button{font-family:inherit; cursor:pointer;}
     .pcp-root input, .pcp-root select, .pcp-root textarea{font-family:inherit; font-size:14px;}
-    .pcp-scroll{scrollbar-width thin;}
+    .pcp-scroll{scrollbar-width: thin;}
     .pcp-tabular{font-variant-numeric: tabular-nums; font-family: var(--font-data);}
 
     /* Sidebar */
