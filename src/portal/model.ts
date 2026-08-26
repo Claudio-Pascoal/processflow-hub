@@ -114,3 +114,40 @@ export function formatarData(value: string | null | undefined): string {
     year: "numeric",
   });
 }
+
+/* ===================== PAPÉIS E PERMISSÕES ===================== */
+
+export const PAPEIS = ["admin", "analista", "gestor", "dono", "leitor"] as const;
+export type Papel = (typeof PAPEIS)[number];
+
+export const PAPEL_LABEL: Record<Papel, string> = {
+  admin: "Administrador",
+  analista: "Analista de Processos",
+  gestor: "Gestor de Processo",
+  dono: "Dono de Processo",
+  leitor: "Leitor",
+};
+
+export const PAPEL_DESCRICAO: Record<Papel, string> = {
+  admin: "Tudo: criar/editar processos, atribuir papéis e todas as etapas do workflow.",
+  analista: "Criar processos, elaborar documentos, enviar para validação e criar versões.",
+  gestor: "Validação do Gestor de Processo.",
+  dono: "Validação do Dono e aprovação final.",
+  leitor: "Apenas consulta.",
+};
+
+const tem = (papeis: Papel[], ...alvos: Papel[]) => papeis.some((p) => alvos.includes(p));
+
+/** Analista e Administrador criam e editam processos. */
+export const podeCriarProcesso = (papeis: Papel[]) => tem(papeis, "admin", "analista");
+/** Elaboração: iniciar, enviar para validação, criar nova versão. */
+export const podeElaborar = (papeis: Papel[]) => tem(papeis, "admin", "analista");
+export const podeValidarGestor = (papeis: Papel[]) => tem(papeis, "admin", "gestor");
+export const podeValidarDono = (papeis: Papel[]) => tem(papeis, "admin", "dono");
+export const podeAprovar = (papeis: Papel[]) => tem(papeis, "admin", "dono");
+export const podeGerirPapeis = (papeis: Papel[]) => tem(papeis, "admin");
+
+/** Papel principal a mostrar na interface. */
+export function papelPrincipal(papeis: Papel[]): Papel {
+  return (PAPEIS.find((p) => papeis.includes(p)) ?? "leitor") as Papel;
+}
