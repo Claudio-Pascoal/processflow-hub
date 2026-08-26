@@ -187,8 +187,11 @@ function WorkflowProcesso() {
         documento_versao_id: versao.id,
         de_estado: de,
         para_estado: para,
+        utilizador_id:
+          data?.utilizadores.find((u) => u.auth_user_id === session?.user.id)?.id ?? null,
         comentario: acao.label,
       });
+
     },
     onSuccess: () => {
       toast.success("Workflow atualizado");
