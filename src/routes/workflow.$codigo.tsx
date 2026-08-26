@@ -318,18 +318,42 @@ function WorkflowProcesso() {
                   )}
                   {versao &&
                     session &&
-                    acoesDisponiveis(versao).map((a) => (
-                      <button
-                        key={a.tipo}
-                        className="pcp-icon-btn"
-                        style={{ marginTop: 8, width: "100%", justifyContent: "center" }}
-                        disabled={mutation.isPending}
-                        onClick={() => mutation.mutate({ acao: a, versao, processo: p })}
-                      >
-                        {a.tipo === "nova_versao" ? <Plus size={13} /> : <CheckCircle2 size={13} />}
-                        {a.label}
-                      </button>
-                    ))}
+                    acoesDisponiveis(versao).map((a) => {
+                      const { pode, reservado } = permissaoDaAcao(a, papeis);
+                      if (!pode)
+                        return (
+                          <div
+                            key={a.tipo}
+                            style={{
+                              marginTop: 8,
+                              fontSize: 11,
+                              color: "var(--text-faint)",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 4,
+                            }}
+                          >
+                            <Lock size={11} /> {a.label} — {reservado}
+                          </div>
+                        );
+                      return (
+                        <button
+                          key={a.tipo}
+                          className="pcp-icon-btn"
+                          style={{ marginTop: 8, width: "100%", justifyContent: "center" }}
+                          disabled={mutation.isPending}
+                          onClick={() => mutation.mutate({ acao: a, versao, processo: p })}
+                        >
+                          {a.tipo === "nova_versao" ? (
+                            <Plus size={13} />
+                          ) : (
+                            <CheckCircle2 size={13} />
+                          )}
+                          {a.label}
+                        </button>
+                      );
+                    })}
+
                   <button
                     className="pcp-icon-btn"
                     style={{ marginTop: 6, width: "100%", justifyContent: "center" }}
