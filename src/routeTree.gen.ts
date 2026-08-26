@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CadeiaDeValorRouteImport } from './routes/cadeia-de-valor'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ProcessosIndexRouteImport } from './routes/processos.index'
 import { Route as ProcessosCodigoRouteImport } from './routes/processos.$codigo'
 import { Route as WorkflowIndexRouteImport } from './routes/workflow.index'
@@ -24,6 +25,11 @@ const IndexRoute = IndexRouteImport.update({
 const CadeiaDeValorRoute = CadeiaDeValorRouteImport.update({
   id: '/cadeia-de-valor',
   path: '/cadeia-de-valor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProcessosIndexRoute = ProcessosIndexRouteImport.update({
@@ -50,6 +56,7 @@ const WorkflowCodigoRoute = WorkflowCodigoRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cadeia-de-valor': typeof CadeiaDeValorRoute
+  '/dashboard': typeof DashboardRoute
   '/processos/$codigo': typeof ProcessosCodigoRoute
   '/workflow/$codigo': typeof WorkflowCodigoRoute
   '/processos/': typeof ProcessosIndexRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cadeia-de-valor': typeof CadeiaDeValorRoute
+  '/dashboard': typeof DashboardRoute
   '/processos/$codigo': typeof ProcessosCodigoRoute
   '/workflow/$codigo': typeof WorkflowCodigoRoute
   '/processos': typeof ProcessosIndexRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/cadeia-de-valor': typeof CadeiaDeValorRoute
+  '/dashboard': typeof DashboardRoute
   '/processos/$codigo': typeof ProcessosCodigoRoute
   '/workflow/$codigo': typeof WorkflowCodigoRoute
   '/processos/': typeof ProcessosIndexRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/cadeia-de-valor'
+    | '/dashboard'
     | '/processos/$codigo'
     | '/workflow/$codigo'
     | '/processos/'
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/cadeia-de-valor'
+    | '/dashboard'
     | '/processos/$codigo'
     | '/workflow/$codigo'
     | '/processos'
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/cadeia-de-valor'
+    | '/dashboard'
     | '/processos/$codigo'
     | '/workflow/$codigo'
     | '/processos/'
@@ -102,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CadeiaDeValorRoute: typeof CadeiaDeValorRoute
+  DashboardRoute: typeof DashboardRoute
   ProcessosCodigoRoute: typeof ProcessosCodigoRoute
   WorkflowCodigoRoute: typeof WorkflowCodigoRoute
   ProcessosIndexRoute: typeof ProcessosIndexRoute
@@ -122,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/cadeia-de-valor'
       fullPath: '/cadeia-de-valor'
       preLoaderRoute: typeof CadeiaDeValorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/processos/': {
@@ -158,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CadeiaDeValorRoute: CadeiaDeValorRoute,
+  DashboardRoute: DashboardRoute,
   ProcessosCodigoRoute: ProcessosCodigoRoute,
   WorkflowCodigoRoute: WorkflowCodigoRoute,
   ProcessosIndexRoute: ProcessosIndexRoute,
