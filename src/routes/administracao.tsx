@@ -4,9 +4,20 @@ import { useState } from "react";
 import { Lock, Plus, Save, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { usePortal } from "@/portal/data";
-import { Carregando, EstadoProcessoBadge, PageHeader, PortalShell, useSession } from "@/portal/ui";
-import { DOC_TIPOS, MACROPROCESSOS, type Macroprocesso } from "@/portal/model";
+import { usePapeisTodos, usePortal, useUtilizadorAtual } from "@/portal/data";
+import { Carregando, EstadoProcessoBadge, PageHeader, PortalShell } from "@/portal/ui";
+import {
+  DOC_TIPOS,
+  MACROPROCESSOS,
+  PAPEIS,
+  PAPEL_DESCRICAO,
+  PAPEL_LABEL,
+  podeCriarProcesso,
+  podeGerirPapeis,
+  type Macroprocesso,
+  type Papel,
+} from "@/portal/model";
+
 
 export const Route = createFileRoute("/administracao")({
   head: () => ({
