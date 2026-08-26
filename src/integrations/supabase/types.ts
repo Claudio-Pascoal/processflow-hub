@@ -290,6 +290,7 @@ export type Database = {
       }
       utilizadores: {
         Row: {
+          auth_user_id: string | null
           created_at: string
           email: string
           id: string
@@ -297,6 +298,7 @@ export type Database = {
           role: string
         }
         Insert: {
+          auth_user_id?: string | null
           created_at?: string
           email: string
           id?: string
@@ -304,6 +306,7 @@ export type Database = {
           role: string
         }
         Update: {
+          auth_user_id?: string | null
           created_at?: string
           email?: string
           id?: string
@@ -369,6 +372,8 @@ export type Database = {
         }
         Returns: boolean
       }
+      tem_papel_editor: { Args: { _user_id: string }; Returns: boolean }
+      tem_papel_validador: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role:
