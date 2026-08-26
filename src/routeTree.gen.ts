@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProcessosIndexRouteImport } from './routes/processos.index'
 import { Route as ProcessosCodigoRouteImport } from './routes/processos.$codigo'
 import { Route as WorkflowIndexRouteImport } from './routes/workflow.index'
+import { Route as WorkflowCodigoRouteImport } from './routes/workflow.$codigo'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,16 +35,23 @@ const WorkflowIndexRoute = WorkflowIndexRouteImport.update({
   path: '/workflow/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WorkflowCodigoRoute = WorkflowCodigoRouteImport.update({
+  id: '/workflow/$codigo',
+  path: '/workflow/$codigo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/processos/$codigo': typeof ProcessosCodigoRoute
+  '/workflow/$codigo': typeof WorkflowCodigoRoute
   '/processos/': typeof ProcessosIndexRoute
   '/workflow/': typeof WorkflowIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/processos/$codigo': typeof ProcessosCodigoRoute
+  '/workflow/$codigo': typeof WorkflowCodigoRoute
   '/processos': typeof ProcessosIndexRoute
   '/workflow': typeof WorkflowIndexRoute
 }
@@ -51,20 +59,38 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/processos/$codigo': typeof ProcessosCodigoRoute
+  '/workflow/$codigo': typeof WorkflowCodigoRoute
   '/processos/': typeof ProcessosIndexRoute
   '/workflow/': typeof WorkflowIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/processos/$codigo' | '/processos/' | '/workflow/'
+  fullPaths:
+    | '/'
+    | '/processos/$codigo'
+    | '/workflow/$codigo'
+    | '/processos/'
+    | '/workflow/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/processos/$codigo' | '/processos' | '/workflow'
-  id: '__root__' | '/' | '/processos/$codigo' | '/processos/' | '/workflow/'
+  to:
+    | '/'
+    | '/processos/$codigo'
+    | '/workflow/$codigo'
+    | '/processos'
+    | '/workflow'
+  id:
+    | '__root__'
+    | '/'
+    | '/processos/$codigo'
+    | '/workflow/$codigo'
+    | '/processos/'
+    | '/workflow/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProcessosCodigoRoute: typeof ProcessosCodigoRoute
+  WorkflowCodigoRoute: typeof WorkflowCodigoRoute
   ProcessosIndexRoute: typeof ProcessosIndexRoute
   WorkflowIndexRoute: typeof WorkflowIndexRoute
 }
@@ -99,12 +125,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkflowIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/workflow/$codigo': {
+      id: '/workflow/$codigo'
+      path: '/workflow/$codigo'
+      fullPath: '/workflow/$codigo'
+      preLoaderRoute: typeof WorkflowCodigoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProcessosCodigoRoute: ProcessosCodigoRoute,
+  WorkflowCodigoRoute: WorkflowCodigoRoute,
   ProcessosIndexRoute: ProcessosIndexRoute,
   WorkflowIndexRoute: WorkflowIndexRoute,
 }
