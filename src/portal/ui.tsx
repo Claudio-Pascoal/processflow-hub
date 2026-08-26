@@ -17,7 +17,10 @@ import {
 } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { useUtilizadorAtual } from "./data";
 import {
+  PAPEL_LABEL,
+
   DOC_ESTADO_STYLE,
   ESTADO_PROCESSO_STYLE,
   type DocEstado,
