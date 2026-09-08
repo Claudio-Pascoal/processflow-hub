@@ -19,7 +19,7 @@ export interface LoginScreenProps {
     modo: LoginMode;
     email: string;
     password: string;
-    nome?: string;
+    nome?: string | undefined;
   }) => void;
   /** Chamado ao clicar em "Continuar com Google" */
   onGoogle?: () => void;
