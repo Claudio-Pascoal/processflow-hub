@@ -14,6 +14,7 @@ import { Route as AdministracaoRouteImport } from './routes/administracao'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CadeiaDeValorRouteImport } from './routes/cadeia-de-valor'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as LoginStandaloneRouteImport } from './routes/login-standalone'
 import { Route as ProcessosIndexRouteImport } from './routes/processos.index'
 import { Route as ProcessosCodigoRouteImport } from './routes/processos.$codigo'
 import { Route as WorkflowIndexRouteImport } from './routes/workflow.index'
@@ -44,6 +45,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginStandaloneRoute = LoginStandaloneRouteImport.update({
+  id: '/login-standalone',
+  path: '/login-standalone',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProcessosIndexRoute = ProcessosIndexRouteImport.update({
   id: '/processos/',
   path: '/processos/',
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/cadeia-de-valor': typeof CadeiaDeValorRoute
   '/dashboard': typeof DashboardRoute
+  '/login-standalone': typeof LoginStandaloneRoute
   '/processos/$codigo': typeof ProcessosCodigoRoute
   '/workflow/$codigo': typeof WorkflowCodigoRoute
   '/processos/': typeof ProcessosIndexRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/cadeia-de-valor': typeof CadeiaDeValorRoute
   '/dashboard': typeof DashboardRoute
+  '/login-standalone': typeof LoginStandaloneRoute
   '/processos/$codigo': typeof ProcessosCodigoRoute
   '/workflow/$codigo': typeof WorkflowCodigoRoute
   '/processos': typeof ProcessosIndexRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/cadeia-de-valor': typeof CadeiaDeValorRoute
   '/dashboard': typeof DashboardRoute
+  '/login-standalone': typeof LoginStandaloneRoute
   '/processos/$codigo': typeof ProcessosCodigoRoute
   '/workflow/$codigo': typeof WorkflowCodigoRoute
   '/processos/': typeof ProcessosIndexRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/cadeia-de-valor'
     | '/dashboard'
+    | '/login-standalone'
     | '/processos/$codigo'
     | '/workflow/$codigo'
     | '/processos/'
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/cadeia-de-valor'
     | '/dashboard'
+    | '/login-standalone'
     | '/processos/$codigo'
     | '/workflow/$codigo'
     | '/processos'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/cadeia-de-valor'
     | '/dashboard'
+    | '/login-standalone'
     | '/processos/$codigo'
     | '/workflow/$codigo'
     | '/processos/'
@@ -141,6 +153,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CadeiaDeValorRoute: typeof CadeiaDeValorRoute
   DashboardRoute: typeof DashboardRoute
+  LoginStandaloneRoute: typeof LoginStandaloneRoute
   ProcessosCodigoRoute: typeof ProcessosCodigoRoute
   WorkflowCodigoRoute: typeof WorkflowCodigoRoute
   ProcessosIndexRoute: typeof ProcessosIndexRoute
@@ -184,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login-standalone': {
+      id: '/login-standalone'
+      path: '/login-standalone'
+      fullPath: '/login-standalone'
+      preLoaderRoute: typeof LoginStandaloneRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/processos/': {
       id: '/processos/'
       path: '/processos'
@@ -221,6 +241,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CadeiaDeValorRoute: CadeiaDeValorRoute,
   DashboardRoute: DashboardRoute,
+  LoginStandaloneRoute: LoginStandaloneRoute,
   ProcessosCodigoRoute: ProcessosCodigoRoute,
   WorkflowCodigoRoute: WorkflowCodigoRoute,
   ProcessosIndexRoute: ProcessosIndexRoute,
